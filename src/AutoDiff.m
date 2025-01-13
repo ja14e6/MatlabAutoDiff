@@ -162,12 +162,12 @@ classdef AutoDiff
         end
         
         function x = real(x)
-            x.derivatives = real(x.derivatives)
+            x.derivatives = real(x.derivatives);
             x.values = real(x.values);
         end
 
         function x = imag(x)
-            x.derivatives = imag(x.derivatives)
+            x.derivatives = imag(x.derivatives);
             x.values = imag(x.values);
         end
         
@@ -416,7 +416,10 @@ classdef AutoDiff
         function y = isnan(x)
             y = isnan(x.values);
         end
-
+        
+        function y = isinf(x)
+            y = isinf(x.values);
+        end
 
         function mylength = length(x)
             mylength = length(x.values);
@@ -517,7 +520,7 @@ classdef AutoDiff
 
 
         function x = mpower(x, n)
-            if numel(x) == 1
+            if isscalar(x)
                 x = x.^n;
             else
                 if n == 1
@@ -565,7 +568,7 @@ classdef AutoDiff
 
 
         function z = mtimes(x, y)
-            if (numel(x) == 1) || (numel(y) == 1)
+            if (isscalar(x)) || (isscalar(y))
                 z = x .* y;
                 return;
             end
@@ -599,7 +602,7 @@ classdef AutoDiff
 
         function z = pagemtimes(x, y)
 
-            if (numel(x) == 1) || (numel(y) == 1)
+            if (isscalar(x)) || (isscalar(y))
                 z = x .* y;
                 return;
             end
@@ -676,7 +679,7 @@ classdef AutoDiff
         
         
         function z = mrdivide(x, y)
-            if (numel(y) == 1)
+            if (isscalar(y))
                 z = x ./ y;
                 return;
             else
@@ -998,9 +1001,9 @@ classdef AutoDiff
             if isa(x, 'AutoDiff')
                 if isa(y, 'AutoDiff')
                     z.values = x.values .* y.values;
-                    if numel(x.values) == 1
+                    if isscalar(x.values)
                         z.derivatives = sparse(y.values(:)) * x.derivatives + x.values * y.derivatives;
-                    elseif numel(y.values) == 1
+                    elseif isscalar(y.values)
                         z.derivatives = sparse(x.values(:)) * y.derivatives + y.values * x.derivatives;
                     elseif (ndims(x) == ndims(y)) && all(size(x) == size(y))
                         z.derivatives = AutoDiff.spdiag(y.values) * x.derivatives + AutoDiff.spdiag(x.values) * y.derivatives;
@@ -1012,7 +1015,7 @@ classdef AutoDiff
 
                 else
                     z.values = x.values .* y;
-                    if numel(x.values) == 1
+                    if isscalar(x.values)
                         z.derivatives = sparse(y(:)) * x.derivatives;
                     else
                         if (ndims(x) == ndims(y)) && all(size(x) == size(y))

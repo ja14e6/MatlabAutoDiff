@@ -1,4 +1,4 @@
-function [J, f] = AutoDiffJacobianFiniteDiff(func, x, range, epsilons, centered)
+function [J, f] = AutoDiffJacobianFiniteDiff(func, x, p, range, epsilons, centered)
 
 % AutoDiffJacobianFiniteDiff returns the jacobian of function f evaluated at x using Finite
 % Differences.
@@ -26,36 +26,36 @@ function [J, f] = AutoDiffJacobianFiniteDiff(func, x, range, epsilons, centered)
 % Documentation created  by Martin de La Gorce
 
 
-if nargin < 3
+if nargin < 4
     range = (1:numel(x));
 end
-if nargin < 5
+if nargin < 6
     centered = true;
 end
-if nargin < 4 || isempty(epsilons)
+if nargin < 5 || isempty(epsilons)
     epsilons = ones(size(x)) .* 1e-6;
 end
 if isempty(range)
     range = (1:numel(x));
 end
 
-f = func(x);
+f = func(x, p);
 J = zeros(numel(f), numel(range));
 if centered
     for k = range(:)'
         x2 = x;
         x2(k) = x(k) + epsilons(k);
-        f2 = func(x2);
+        f2 = func(x2, p);
         x2 = x;
         x2(k) = x(k) - epsilons(k);
-        f3 = func(x2);
+        f3 = func(x2, p);
         J(:, k) = (f2(:) - f3(:)) / (2 * epsilons(k));
     end
 else
     for k = range(:)'
         x2 = x;
         x2(k) = x(k) + epsilons(k);
-        f2 = func(x2);
+        f2 = func(x2, p);
 
         J(:, k) = (f2(:) - f(:)) / (epsilons(k));
     end

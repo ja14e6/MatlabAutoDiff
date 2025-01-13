@@ -1,4 +1,4 @@
-function [J, f] = AutoDiffJacobianAutoDiff(func, x, range)
+function [J, f] = AutoDiffJacobianAutoDiff(func, x, p, range)
 
 % AutoDiffJacobianAutoDiff returns the jacobian of function evaluated at x using Automatic
 % Differentiation
@@ -46,7 +46,7 @@ function [J, f] = AutoDiffJacobianAutoDiff(func, x, range)
 %
 
 
-if nargin < 3
+if nargin < 4
     xAD = AutoDiff(x);
     nr = numel(x);
 else
@@ -59,15 +59,15 @@ else
 end
 
 try
-    fAD = func(xAD);
+    fAD = func(xAD, p);
     f = getvalue(fAD);
     J = getderivs(fAD);
 catch exception
     warning('failed while calling the function with the AutoDiff instance, trying to call it with the plain data instead to chech that works')
-    func(x);
+    func(x, p);
     warning('It seems like to original function is ok with the plain data , The class AutoDiff needs debugging')
     % rethrow(exception)
-    [~] = func(xAD); % better to call again the function instead of using exception as it makes it possible to use matlab's stop-if -error debugging functionality
+    [~] = func(xAD, p); % better to call again the function instead of using exception as it makes it possible to use matlab's stop-if -error debugging functionality
 end
 
 
