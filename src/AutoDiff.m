@@ -621,8 +621,10 @@ classdef AutoDiff
                 size_x = size(x);
                 x_values = x;
             end 
-            if ndims(x)~=ndims(y)|| any(size_x(3:end)~=size_y(3:end))
+            if ndims(x)~=ndims(y) || any(size_x(3:end)~=size_y(3:end))
                 new_size_x= size_y;
+                new_size_y= size_x;
+
                 new_size_x(1)=size(x,1);
                 new_size_x(2)=size(x,2);
                 if isa(x, 'AutoDiff')     
@@ -632,7 +634,7 @@ classdef AutoDiff
                     x = x.* ones(new_size_x);
                     x_values = x;
                 end
-                new_size_y= size_x;
+                
                 new_size_y(1)=size_y(1);
                 new_size_y(2)=size_y(2);
                 if isa(y, 'AutoDiff')
